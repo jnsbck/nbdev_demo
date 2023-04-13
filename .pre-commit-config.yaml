@@ -1,0 +1,9 @@
+repos:
+-   repo: local
+    hooks:
+    - id: nbdev_clean
+      name: nbdev clean
+      entry: nbdev_clean --fname
+#      entry: nbdev_clean --clear_all --fname
+      language: system
+      types: [jupyter]
