@@ -31,20 +31,30 @@ pip install pre-commit
 ```
 conda install -c conda-forge pre-commit
 ```
-Then (in your repository) create a file named `.pre-commit-config.yaml`with the following content:
+Then (in your repository) create a file named `.pre-commit-config.yaml` with the following content:
 ```
 repos:
 -   repo: local
     hooks:
     - id: nbdev_clean # hook id 
       name: nbdev clean # some readable name
-      entry: nbdev_clean --fname # the actual script that gets run on the files.
-#      entry: nbdev_clean --clear_all --fname # the actual script that gets run on the files
+      entry: bash .pre-commit-hooks/run_nbdev_on_staged_files.sh # path to the script
       language: system # how to run the script
       types: [jupyter] # what to run it on
+      stages: [commit] # when to run it
 ```
 
-This file should be added to staging or `.gitignore` depending on if you want to work off of the same `pre-commit` config. 
+and a file `.pre-commit-hooks/run_nbdev_on_staged_files.sh` that contains.
+```bash
+#!/usr/bin/env bash
+
+for arg in "$@"; do
+    nbdev_clean --fname "$arg" # removes only metadata
+    # nbdev_clean --clear_all --fname "$arg" # removes outputs and metadata
+done
+```
+
+These file should be added to staging or `.gitignore` depending on if you want to work off of the same `pre-commit` config. 
 In your repository run `pre-commit install` to set up the git hook scripts and your done! Now `pre-commit` will run `nbdev_clean` automatically on git commit!.
 Depending on what hooks you'd like to run you can also add `nbdev_merge` or `nbdev_trust` to your config in a similar fashion.
 
